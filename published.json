@@ -35,14 +35,12 @@
         "clause": ""
       },
       "materials": 12000,
-      "predoplata": 24000,
-      "second_payment": {
-        "amount": 48000,
-        "note": "после завершения черновых работ"
-      },
+      "predoplata": 10000,
+      "second_payment": null,
+      "monthly": true,
       "term": {
-        "value": "7–8",
-        "unit": "месяцев"
+        "value": "4",
+        "unit": "месяца"
       },
       "reporting": false
     },
@@ -96,7 +94,7 @@
               "name": "Монтаж перегородок из газоблока",
               "unit": "компл.",
               "qty": 1,
-              "price": 7200
+              "price": 3600
             }
           }
         ]
@@ -142,13 +140,11 @@
         "clause": ""
       },
       "materials": 12000,
-      "predoplata": 24000,
-      "second_payment": {
-        "amount": 48000,
-        "note": "after completion of the rough works"
-      },
+      "predoplata": 10000,
+      "second_payment": null,
+      "monthly": true,
       "term": {
-        "value": "7–8",
+        "value": "4",
         "unit": "months"
       },
       "reporting": false
@@ -203,7 +199,7 @@
               "name": "Aerated block partition installation",
               "unit": "package",
               "qty": 1,
-              "price": 7200
+              "price": 3600
             }
           }
         ]

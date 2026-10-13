@@ -135,12 +135,11 @@ function assemble(manifest, variantKey) {
     md.push("");
     md.push("---");
     md.push("");
-    md.push("## " + FIXED.plans_h2);
-    md.push("");
-    // Фото плана: пара слева, суммарно 2/3 полосы, подпись под ним
+    // Фото плана: пара слева, суммарно 2/3 полосы; зону называет подпись,
+    // отдельного заголовка нет
     md.push('<div style="text-align:left">' + m.images.plans.map((p, i) => '<img src="' + p + '" style="width:32%' + (i ? ";margin-left:4px" : "") + '">').join("") + "</div>");
     md.push('<div style="text-align:left;font-size:80%;color:#434343">' + FIXED.plan_caption + "</div>");
-    sections.push({ id: "sec-plans", slide: sections.length + 1, title: FIXED.plans_h2, blocks: ["plans"] });
+    sections.push({ id: "sec-plans", slide: sections.length + 1, title: FIXED.plan_caption, blocks: ["plans"] });
   }
 
   // --- Слайды: фото объекта, по 3 на слайд (Документ 3.7)
@@ -307,6 +306,7 @@ function assemble(manifest, variantKey) {
   md.push(FIXED.vat_para);
   md.push("");
   md.push("**" + FIXED.predoplata_label + " " + fmtMoney(m.commerce.predoplata || 0) + " € + 19% VAT** — " + FIXED.predoplata_purpose + ".");
+  if (m.commerce.monthly) md.push(FIXED.monthly_payments);
   md.push("");
   if (m.commerce.second_payment && m.commerce.second_payment.amount) {
     md.push("**" + FIXED.second_label + " " + fmtMoney(m.commerce.second_payment.amount) + " € + 19% VAT** — " + m.commerce.second_payment.note + ".");
@@ -537,10 +537,16 @@ function mergeByName(list) {
 // помещения). Переносится из рейла горизонтальной строкой в документ.
 function roomModel(a) {
   const vRows = applyVariant(estimateRows(), STATE.manifest, STATE.variant).rows;
-  const names = [];
-  vRows.forEach((r) => { if (r.room && !names.includes(r.room)) names.push(r.room); });
+  // room может быть списком (работа в нескольких зонах); строки без room —
+  // общие работы, видны при любом выборе помещения
+  const roomsOf = (r) => (Array.isArray(r.room) ? r.room : r.room ? [r.room] : []);
+  const visible = (rm) => mergeByName(vRows.filter((r) => !roomsOf(r).length || roomsOf(r).includes(rm)));
+  const present = [];
+  vRows.forEach((r) => roomsOf(r).forEach((x) => { if (!present.includes(x)) present.push(x); }));
+  const order = FIXED.room_order || [];
+  const names = order.filter((x) => present.includes(x)).concat(present.filter((x) => !order.includes(x)));
   return {
-    rooms: names.map((rm) => ({ name: rm, count: mergeByName(vRows.filter((r) => r.room === rm)).length })),
+    rooms: names.map((rm) => ({ name: rm, count: visible(rm).length })),
     all: mergeByName(vRows).length,
   };
 }
@@ -592,8 +598,9 @@ function renderDoc(a, opts) {
       inner = band + titleBlock +
         '<div class="doc-h2">' + FIXED.description_h2 + '</div><div class="doc-text"><p>' + esc(m.object.opening.replace("{brand}", FIXED.brand.replace(/^MELESHIN\s*/, ""))) + '</p><p><b>' + FIXED.label_object + '</b> ' + esc(m.object.field_object) + '</p><p><b>' + FIXED.label_zone + '</b> ' + esc(m.object.field_zone) + '</p>' + (m.object.field_materials ? '<p><b>' + FIXED.label_materials + '</b> ' + esc(m.object.field_materials) + "</p>" : "") + "</div>";
     } else if (sec.id === "sec-plans") {
-      // Фото плана: ряд слева, суммарно 2/3 полосы, подпись под ним
-      inner = '<div class="doc-h2">' + FIXED.plans_h2 + '</div><div class="doc-plan-extra">' + m.images.plans.map((p) => '<img src="' + p + '" alt="">').join("") + '</div><div class="doc-plan-cap">' + FIXED.plan_caption + "</div>";
+      // Фото плана: ряд слева, суммарно 2/3 полосы; зону называет подпись,
+      // отдельного заголовка нет
+      inner = '<div class="doc-plan-extra">' + m.images.plans.map((p) => '<img src="' + p + '" alt="">').join("") + '</div><div class="doc-plan-cap">' + FIXED.plan_caption + "</div>";
     } else if (sec.id.startsWith("sec-photos")) {
       // Заголовок зоны — на первой фото-полосе; продолжение секции идёт без него
       inner = (sec.title ? '<div class="doc-h2">' + esc(sec.title) + '</div>' : "") + '<div class="doc-photos">' + sec.photos.map((p) => '<img src="' + p + '" alt="">').join("") + "</div>";
@@ -624,13 +631,14 @@ function renderDoc(a, opts) {
         let total = a.docItogo;
         if (STATE.room !== "all") {
           const vRows = applyVariant(estimateRows(), m, STATE.variant).rows;
-          rows = mergeByName(vRows.filter((r) => r.room === STATE.room)).map((r, i) => ({ n: i + 1, name: r.name, unit: r.unit, qty: r.qty, price: r.price, cost: round2(r.qty * r.price) }));
+          const inRoom = (r) => Array.isArray(r.room) ? r.room.includes(STATE.room) : r.room === STATE.room;
+          rows = mergeByName(vRows.filter((r) => !r.room || inRoom(r))).map((r, i) => ({ n: i + 1, name: r.name, unit: r.unit, qty: r.qty, price: r.price, cost: round2(r.qty * r.price) }));
           total = round2(rows.reduce((s, r) => s + r.cost, 0));
         }
         const rm = roomModel(a);
         const act = (x) => (STATE.room === x ? ' class="active"' : "");
-        // Строка помещений — только когда у строк есть помещения; пакетный состав
-        // (компл.) фильтрацию по помещениям не имеет
+        // Строка помещений: зоны строк и кнопка Все; общие строки (без room)
+        // видны при любом выборе
         const chooser = rm.rooms.length ? '<div class="room-tabs">' +
           '<button data-room="all"' + act("all") + '><span>' + FIXED.room_all + '</span><span class="c">' + rm.all + "</span></button>" +
           rm.rooms.map((r) => '<button data-room="' + esc(r.name) + '"' + act(r.name) + '><span>' + esc(r.name) + '</span><span class="c">' + r.count + "</span></button>").join("") +
@@ -672,6 +680,7 @@ function renderDoc(a, opts) {
         (m.commerce.price.kind === "estimate" && m.commerce.price.clause ? "<p>Стоимость " + esc(m.commerce.price.clause) + ".</p>" : "") +
         "<p>" + a.breakdownLine + "</p><p>" + FIXED.vat_para + "</p>" +
         "<p><b>" + FIXED.predoplata_label + " " + fmtMoney(m.commerce.predoplata || 0) + " € + 19% VAT</b> — " + FIXED.predoplata_purpose + ".</p>" +
+        (m.commerce.monthly ? "<p>" + FIXED.monthly_payments + "</p>" : "") +
         (m.commerce.second_payment && m.commerce.second_payment.amount ? "<p><b>" + FIXED.second_label + " " + fmtMoney(m.commerce.second_payment.amount) + " € + 19% VAT</b> — " + esc(m.commerce.second_payment.note) + ".</p>" : "") +
         "<p>" + FIXED.final_settlement + "</p>" +
         '<div class="doc-h3">' + FIXED.term_h3 + ": " + esc(m.commerce.term.value) + " " + esc(m.commerce.term.unit) + "</div><p>" + FIXED.term_tail + "</p>" +

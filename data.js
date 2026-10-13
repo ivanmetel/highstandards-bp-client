@@ -9,7 +9,6 @@ const STRINGS_RU = {
   brand: "High Standards LTD",
   title: "Коммерческое предложение",
   description_h2: "Описание проекта",
-  plans_h2: "План этажа",
   plan_caption: "План помещения",
   hero_include: "включая работы и черновые материалы",
   photos_h2_start: "Фото объекта",
@@ -17,9 +16,11 @@ const STRINGS_RU = {
   related_cols: ["#", "Работа", "Ед.", "Кол&#8209;во", "Цена за ед., €"],
   related_h2: "Проектные сопутствующие работы",
   related_rows: [
-    { name: "Работы по управлению проектом", unit: "мес.", qty: 8, price: 1400 },
-    { name: "Сопутствующие работы", unit: "мес.", qty: 8, price: 350 },
+    { name: "Работы по управлению проектом", unit: "мес.", qty: 4, price: 1000 },
+    { name: "Сопутствующие работы", unit: "мес.", qty: 4, price: 500 },
   ],
+  room_order: ["Кухня-зал", "Спальня 1", "Спальня 2", "Санузел"],
+  monthly_payments: "Остальные платежи осуществляются 1 раз в месяц.",
   prelim_note: "Предложенный состав работ и их стоимость является предварительным и может быть уточнён в ходе подготовительных работ.",
   org_process_h3: "Организация строительного процесса",
   org_process: [
@@ -87,7 +88,6 @@ const STRINGS_EN = {
   brand: "High Standards LTD",
   title: "Commercial Proposal",
   description_h2: "Project Description",
-  plans_h2: "Floor Plan",
   plan_caption: "Apartment plan",
   hero_include: "including works and rough materials",
   photos_h2_start: "Site Photos",
@@ -95,9 +95,11 @@ const STRINGS_EN = {
   related_cols: ["#", "Work", "Unit", "Qty", "Unit price, €"],
   related_h2: "Related Project Works",
   related_rows: [
-    { name: "Project management works", unit: "months", qty: 8, price: 1400 },
-    { name: "Related works", unit: "months", qty: 8, price: 350 },
+    { name: "Project management works", unit: "months", qty: 4, price: 1000 },
+    { name: "Related works", unit: "months", qty: 4, price: 500 },
   ],
+  room_order: ["Kitchen-living room", "Bedroom 1", "Bedroom 2", "Bathroom"],
+  monthly_payments: "The remaining payments are made once a month.",
   prelim_note: "The proposed scope of works and their cost are preliminary and may be refined during the preparation works.",
   org_process_h3: "Organisation of the Construction Process",
   org_process: [
@@ -169,33 +171,34 @@ function setLang(lang) {
 }
 
 // Источник — строки клиентской сметы (манифест sources.estimate: inline).
-// Пакетный состав (крупные позиции, компл.) — помещение у строк отсутствует,
-// фильтр по помещениям не показывается.
+// Пакетный состав (крупные позиции, компл.); room — зона из слов Ивана
+// (кухня-зал, спальня х2, санузел), может быть списком; строки без room —
+// общие работы квартиры, видны при любом выборе помещения.
 const ESTIMATE_ROWS = [
-  { name: "Демонтажные работы", unit: "компл.", qty: 1, price: 7000 },
-  { name: "Монтаж перегородок ГКЛ", unit: "компл.", qty: 1, price: 6000 },
-  { name: "Электромонтажные работы (черновые)", unit: "компл.", qty: 1, price: 13000 },
-  { name: "Сантехнические работы (черновые)", unit: "компл.", qty: 1, price: 9500 },
-  { name: "Штукатурные работы", unit: "компл.", qty: 1, price: 17000 },
-  { name: "Стяжка пола", unit: "компл.", qty: 1, price: 10000 },
-  { name: "Гидроизоляция мокрых зон", unit: "компл.", qty: 1, price: 3500 },
-  { name: "Укладка плитки и керамогранита", unit: "компл.", qty: 1, price: 15000 },
-  { name: "Окраска стен и потолков", unit: "компл.", qty: 1, price: 7500 },
-  { name: "Монтаж подвесных потолков", unit: "компл.", qty: 1, price: 5500 },
+  { name: "Демонтажные работы", unit: "компл.", qty: 1, price: 3500 },
+  { name: "Монтаж перегородок ГКЛ", unit: "компл.", qty: 1, price: 3000, room: ["Спальня 1", "Спальня 2"] },
+  { name: "Электромонтажные работы (черновые)", unit: "компл.", qty: 1, price: 6000 },
+  { name: "Сантехнические работы (черновые)", unit: "компл.", qty: 1, price: 4000, room: ["Санузел", "Кухня-зал"] },
+  { name: "Штукатурные работы", unit: "компл.", qty: 1, price: 7000 },
+  { name: "Стяжка пола", unit: "компл.", qty: 1, price: 4500 },
+  { name: "Гидроизоляция мокрых зон", unit: "компл.", qty: 1, price: 1500, room: ["Санузел"] },
+  { name: "Укладка плитки и керамогранита", unit: "компл.", qty: 1, price: 6000, room: ["Санузел", "Кухня-зал"] },
+  { name: "Окраска стен и потолков", unit: "компл.", qty: 1, price: 3000 },
+  { name: "Монтаж подвесных потолков", unit: "компл.", qty: 1, price: 1500, room: ["Кухня-зал", "Спальня 1", "Спальня 2"] },
 ];
 
 // EN-версия строк: те же числа, переведённые названия.
 const ESTIMATE_ROWS_EN = [
-  { name: "Demolition works", unit: "package", qty: 1, price: 7000 },
-  { name: "Plasterboard partition installation", unit: "package", qty: 1, price: 6000 },
-  { name: "Electrical works (first fix)", unit: "package", qty: 1, price: 13000 },
-  { name: "Plumbing works (first fix)", unit: "package", qty: 1, price: 9500 },
-  { name: "Plastering works", unit: "package", qty: 1, price: 17000 },
-  { name: "Floor screed works", unit: "package", qty: 1, price: 10000 },
-  { name: "Waterproofing of wet areas", unit: "package", qty: 1, price: 3500 },
-  { name: "Tiling works", unit: "package", qty: 1, price: 15000 },
-  { name: "Wall and ceiling painting", unit: "package", qty: 1, price: 7500 },
-  { name: "Suspended ceiling installation", unit: "package", qty: 1, price: 5500 },
+  { name: "Demolition works", unit: "package", qty: 1, price: 3500 },
+  { name: "Plasterboard partition installation", unit: "package", qty: 1, price: 3000, room: ["Bedroom 1", "Bedroom 2"] },
+  { name: "Electrical works (first fix)", unit: "package", qty: 1, price: 6000 },
+  { name: "Plumbing works (first fix)", unit: "package", qty: 1, price: 4000, room: ["Bathroom", "Kitchen-living room"] },
+  { name: "Plastering works", unit: "package", qty: 1, price: 7000 },
+  { name: "Floor screed works", unit: "package", qty: 1, price: 4500 },
+  { name: "Waterproofing of wet areas", unit: "package", qty: 1, price: 1500, room: ["Bathroom"] },
+  { name: "Tiling works", unit: "package", qty: 1, price: 6000, room: ["Bathroom", "Kitchen-living room"] },
+  { name: "Wall and ceiling painting", unit: "package", qty: 1, price: 3000 },
+  { name: "Suspended ceiling installation", unit: "package", qty: 1, price: 1500, room: ["Kitchen-living room", "Bedroom 1", "Bedroom 2"] },
 ];
 
 function estimateRows() {
@@ -269,9 +272,10 @@ const MANIFEST_RU = {
   commerce: {
     price: { kind: "final", clause: "" }, // final | estimate
     materials: 12000, // черновые материалы — в цене, не поле КП (ТЗ ЛК v2 §4)
-    predoplata: 24000,
-    second_payment: { amount: 48000, note: "после завершения черновых работ" },
-    term: { value: "7–8", unit: "месяцев" },
+    predoplata: 10000,
+    second_payment: null, // остальные платежи — ежемесячно (commerce.monthly)
+    monthly: true,
+    term: { value: "4", unit: "месяца" },
     reporting: false, // пункт об отчётности — только длинные проекты
   },
   layout: {
@@ -296,7 +300,7 @@ const MANIFEST_RU = {
     base: { label: "Перегородки ГКЛ" },
     aerocrete: {
       label: "Газоблок",
-      replace: [{ match: "Монтаж перегородок ГКЛ", row: { name: "Монтаж перегородок из газоблока", unit: "компл.", qty: 1, price: 7200 } }],
+      replace: [{ match: "Монтаж перегородок ГКЛ", row: { name: "Монтаж перегородок из газоблока", unit: "компл.", qty: 1, price: 3600, room: ["Спальня 1", "Спальня 2"] } }],
     },
     "no-partition": { label: "Без перепланировки", drop: ["Монтаж перегородок ГКЛ"] },
   },
@@ -321,13 +325,12 @@ const MANIFEST_EN = (function () {
     "Finishing plumbing works": ["Taps", "Shower system"],
   };
   en.layout.extra_works = ["Relocation of walls according to the approved interior design", "Waterproofing of an additional bathroom"];
-  en.commerce.second_payment.note = "after completion of the rough works";
   en.commerce.term.unit = "months";
   en.variants = {
     base: { label: "Plasterboard partitions" },
     aerocrete: {
       label: "Aerated block",
-      replace: [{ match: "Plasterboard partition installation", row: { name: "Aerated block partition installation", unit: "package", qty: 1, price: 7200 } }],
+      replace: [{ match: "Plasterboard partition installation", row: { name: "Aerated block partition installation", unit: "package", qty: 1, price: 3600, room: ["Bedroom 1", "Bedroom 2"] } }],
     },
     "no-partition": { label: "No layout changes", drop: ["Plasterboard partition installation"] },
   };

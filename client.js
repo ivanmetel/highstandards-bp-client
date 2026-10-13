@@ -10,7 +10,7 @@
 (function () {
   // Локальная копия: движок, данные и published.json лежат в этой же папке
   const ADMIN = new URLSearchParams(location.search).get("admin") || "";
-  const V = "37";
+  const V = "38";
 
   const loadScript = (src) => new Promise((res, rej) => {
     const s = document.createElement("script");
@@ -102,8 +102,8 @@
         PUB = null; // локальная папка недоступна — рендер из манифеста по умолчанию
       }
     }
-    let lang = "ru";
-    try { lang = localStorage.getItem("hs_lang") === "en" ? "en" : "ru"; } catch (e) {}
+    let lang = "en";
+    try { lang = localStorage.getItem("hs_lang") === "ru" ? "ru" : "en"; } catch (e) {}
     setLang(lang);
     STATE.manifest = clone(manifestFor(lang));
     if (PUB) { STATE.variant = PUB.variant || "base"; STATE.status = PUB.status || "sent"; }
