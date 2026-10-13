@@ -1,0 +1,219 @@
+{
+  "generated": "2026-10-11",
+  "variant": "base",
+  "status": "sent",
+  "manifest": {
+    "object": {
+      "folder": "2699-Limassol-Apartment",
+      "subtitle": "Выполнение комплекса работ по капитальному ремонту",
+      "scope": "капитальному ремонту",
+      "opening": "Компания {brand} выполняет комплекс работ по капитальному ремонту квартиры на основании Проектной документации Заказчика.",
+      "field_object": "Квартира 65,5 м², Лимасол.",
+      "basis_doc": "Проектной документацией Заказчика",
+      "field_zone": "Кухня-зал, спальня ×2, санузел.",
+      "field_materials": "",
+      "language": "ru",
+      "date": "11.10.2026",
+      "date_iso": "2026-10-11"
+    },
+    "sources": {
+      "card": "renovation/2699-Limassol-Apartment/2026-09-28-meleshin-2699-Limassol-Apartment-card.md",
+      "estimate": "inline (10 строк, см. ESTIMATE_ROWS)"
+    },
+    "images": {
+      "hero": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&q=80",
+      "plans": [
+        "fl1.png",
+        "fl2.png"
+      ],
+      "photos": [],
+      "gallery": []
+    },
+    "commerce": {
+      "price": {
+        "kind": "final",
+        "clause": ""
+      },
+      "materials": 12000,
+      "predoplata": 24000,
+      "second_payment": {
+        "amount": 48000,
+        "note": "после завершения черновых работ"
+      },
+      "term": {
+        "value": "7–8",
+        "unit": "месяцев"
+      },
+      "reporting": false
+    },
+    "layout": {
+      "permits": true,
+      "works_heading": "Строительно-монтажные, отделочные и сопутствующие работы",
+      "org_process": "on",
+      "related_table": "separate",
+      "omit": [],
+      "not_included_form": "subsections",
+      "prelim_volumes": [
+        "объёмы штукатурки стен",
+        "объёмы укладки плитки"
+      ],
+      "not_estimated": [],
+      "separate_estimate": [
+        "Замена оконных блоков — 5 шт.",
+        "Устройство барной стойки из бетона — 1 шт."
+      ],
+      "engineering": "",
+      "not_included_sections": {
+        "Отделочные материалы": [
+          "Плитка, керамогранит",
+          "Ламинат",
+          "Краска для стен и потолков"
+        ],
+        "Чистовая электрика": [
+          "Розетки и выключатели",
+          "Светильники"
+        ],
+        "Чистовая сантехника": [
+          "Смесители",
+          "Душевая система"
+        ]
+      },
+      "extra_works": [
+        "Перенос стен по утверждённому дизайн-проекту",
+        "Гидроизоляция дополнительного санузла"
+      ]
+    },
+    "variants": {
+      "base": {
+        "label": "Перегородки ГКЛ"
+      },
+      "aerocrete": {
+        "label": "Газоблок",
+        "replace": [
+          {
+            "match": "Монтаж перегородок ГКЛ",
+            "row": {
+              "name": "Монтаж перегородок из газоблока",
+              "unit": "компл.",
+              "qty": 1,
+              "price": 7200
+            }
+          }
+        ]
+      },
+      "no-partition": {
+        "label": "Без перепланировки",
+        "drop": [
+          "Монтаж перегородок ГКЛ"
+        ]
+      }
+    }
+  },
+  "manifest_en": {
+    "object": {
+      "folder": "2699-Limassol-Apartment",
+      "subtitle": "Complete Apartment Renovation Works",
+      "scope": "renovation",
+      "opening": "{brand} carries out a full range of apartment renovation works on the basis of the Client's design documentation.",
+      "field_object": "Apartment, 65.5 m², Limassol.",
+      "basis_doc": "the design documentation provided by the Client",
+      "field_zone": "Kitchen-living room, 2 bedrooms, bathroom.",
+      "field_materials": "",
+      "language": "en",
+      "date": "10/11/2026",
+      "date_iso": "2026-10-11"
+    },
+    "sources": {
+      "card": "renovation/2699-Limassol-Apartment/2026-09-28-meleshin-2699-Limassol-Apartment-card.md",
+      "estimate": "inline (10 строк, см. ESTIMATE_ROWS)"
+    },
+    "images": {
+      "hero": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&q=80",
+      "plans": [
+        "fl1.png",
+        "fl2.png"
+      ],
+      "photos": [],
+      "gallery": []
+    },
+    "commerce": {
+      "price": {
+        "kind": "final",
+        "clause": ""
+      },
+      "materials": 12000,
+      "predoplata": 24000,
+      "second_payment": {
+        "amount": 48000,
+        "note": "after completion of the rough works"
+      },
+      "term": {
+        "value": "7–8",
+        "unit": "months"
+      },
+      "reporting": false
+    },
+    "layout": {
+      "permits": true,
+      "works_heading": "Construction, Finishing and Related Works",
+      "org_process": "on",
+      "related_table": "separate",
+      "omit": [],
+      "not_included_form": "subsections",
+      "prelim_volumes": [
+        "plastering quantities",
+        "tiling quantities"
+      ],
+      "not_estimated": [],
+      "separate_estimate": [
+        "Replacement of window units — 5 pcs.",
+        "Construction of a concrete bar counter — 1 pc."
+      ],
+      "engineering": "",
+      "not_included_sections": {
+        "Finishing materials": [
+          "Tiles, porcelain stoneware",
+          "Laminate flooring",
+          "Wall and ceiling paint"
+        ],
+        "Finishing electrical works": [
+          "Sockets and switches",
+          "Light fixtures"
+        ],
+        "Finishing plumbing works": [
+          "Taps",
+          "Shower system"
+        ]
+      },
+      "extra_works": [
+        "Relocation of walls according to the approved interior design",
+        "Waterproofing of an additional bathroom"
+      ]
+    },
+    "variants": {
+      "base": {
+        "label": "Plasterboard partitions"
+      },
+      "aerocrete": {
+        "label": "Aerated block",
+        "replace": [
+          {
+            "match": "Plasterboard partition installation",
+            "row": {
+              "name": "Aerated block partition installation",
+              "unit": "package",
+              "qty": 1,
+              "price": 7200
+            }
+          }
+        ]
+      },
+      "no-partition": {
+        "label": "No layout changes",
+        "drop": [
+          "Plasterboard partition installation"
+        ]
+      }
+    }
+  }
+}

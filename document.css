@@ -1,0 +1,186 @@
+/* ============================================================
+   Форма документа КП — один файл для всех поверхностей
+   (Документ v2, tz/bp/2026-10-02-tz-bp-document-v2.md; типографика —
+   UI-норма tz/2026-10-02-tz-ui-norm.md). Файл — единственный носитель
+   стилей документа: карточка ЛК и экран «Собрать» админки грузят его
+   так же, как engine.js и data.js; страницы держат только свою оправу.
+   Карточка А4: 794 px, боковые поля 52 (рамка 1 px) = контент 688 px,
+   экран = PDF.
+   ============================================================ */
+
+/* ---------- Карточка (поток) ---------- */
+.doc-flow {
+  width: 794px;   /* карточка = А4 (210 мм @96dpi), не сжимается с окном */
+  color: #434343;   /* все тексты документа rgb(67,67,67); исключения: лого-бренд, подпись менеджера, контактная строка */
+  background: var(--bg-card);
+  border: 1px solid var(--line);   /* рамка листа — волосяная линия, НЕ чёрная: тёмной оправы вокруг листа нет */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 40px 52px 36px;  /* 52, не 53: рамка 1 px, контент остаётся ровно 688 */
+  font-size: 14px;   /* база документа: 12 текст и таблица; 14 H3 и chooser; 16 H2; 24 титул */
+}
+.doc-flow .doc-sec { margin: 0 0 28px; }
+.doc-flow .doc-sec:last-of-type { margin-bottom: 0; }
+.doc-flow .doc-manager-bottom { margin: 24px 0 0; }
+/* Списки с булетами: маркер списка — структура, не знак-разделитель */
+.doc-flow ul { list-style: disc; padding-left: 20px; margin: 8px 0; }
+/* Полоса заголовка документа — правило корпуса BP: лого слева (23px), рядом
+   бренд; линия снизу. Полоса не называет документ — название несёт заголовок.
+   Контактная строка замыкает документ после подписи. */
+.doc-band { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 1.5px solid var(--line); margin-bottom: 22px; }
+.doc-band img { height: 23px; object-fit: contain; }
+.doc-band b { font-size: 14px; color: var(--ink-1); }   /* лого-бренд — исключение из цвета текста */
+.doc-footer { margin-top: 24px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-3); }
+
+/* Подпись менеджера — в самом низу документа */
+.doc-manager { text-align: right; color: var(--ink-2); font-size: 12px; line-height: 1.5; }   /* подпись = plain text: 12 px, как текст */
+.doc-manager a { color: var(--ink-2); text-decoration: none; }
+.doc-title-outer { text-align: center; margin: 6px 0 22px; }
+.doc-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;   /* титул 24 */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.doc-subtitle { font-size: 14px; color: #434343; margin-top: 8px; }
+.doc-h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;   /* H2 16 */
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+}
+.doc-h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #434343;   /* H3 — текст документа: единый цвет, исключений нет */
+  margin: 16px 0 8px;
+}
+/* Строка цены — кегль H3, выделение весом; 20 px остаётся у H2, итоговых
+   плашек и героя */
+.doc-h3.doc-price { font-size: 14px; font-weight: 700; margin-top: 4px; }
+.doc-flow p { font-size: 12px; line-height: 1.5; color: #434343; margin: 8px 0; }   /* plain text: 12 px, одинаковые все параметры с PDF */
+.doc-flow li { font-size: 12px; line-height: 1.5; color: #434343; margin: 4px 0; }
+.doc-grid { display: grid; grid-template-columns: 63% 1fr; gap: 22px; align-items: start; }
+.doc-hero { border-radius: var(--radius-md); overflow: hidden; }
+.doc-hero img { width: 100%; height: 250px; object-fit: cover; }
+.doc-plan { text-align: center; }
+.doc-plan img { width: 62%; margin: 0 auto; border-radius: var(--radius-md); }
+/* Доп. фото плана: пара слева, суммарно 2/3 полосы карточки; подпись — кегль заметки */
+.doc-plan-extra { margin-top: 10px; text-align: left; font-size: 0; }
+.doc-plan-extra img { display: inline-block; vertical-align: top; width: calc((66.6% - 10px) / 2); border-radius: var(--radius-md); }
+.doc-plan-extra img + img { margin-left: 10px; }
+.doc-plan-cap { font-size: 12px; color: #434343; margin-top: 6px; }
+.doc-photos { display: flex; gap: 10px; }
+/* Фотки — детерминированная ширина от полосы карточки: доля 688 px минус
+   отбивки, не flex-рост */
+.doc-photos img { flex: none; width: calc((100% - 20px) / 3); height: 215px; object-fit: cover; border-radius: var(--radius-md); }
+.doc-gallery img { flex: none; width: calc((100% - 50px) / 6); height: 150px; }
+.doc-note { font-size: 12px; color: #434343; margin-top: 10px; }   /* цвет текста единый: заметка не серая */
+
+/* ---------- Таблица работ ---------- */
+/* Одна и та же <table> на карточке и в PDF; шапку при выходе за страницу
+   печати повторяет браузер. Кегль таблицы — 12 на экране и в печати,
+   акценты — весом; жирный в таблице — только значение Итого.
+   Ширины колонок задаёт colgroup в engine.js printTable (Иван дословно:
+   25/55/65/100/100, имя — остаток); колонки не масштабируются и
+   не переносятся. */
+.bp-table-print { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.bp-table-print th {
+  font-size: 12px; font-weight: 600; color: #434343; text-align: left; white-space: nowrap;
+  background: var(--bg-soft); border-bottom: 1px solid var(--line);
+}
+.bp-table-print th.r, .bp-table-print td.r { text-align: right; }
+/* Горизонтальные отбивки ячеек — под ширины колонок: воздух убран до необходимого */
+.bp-table-print th, .bp-table-print td { padding: 7px 4px; }
+.bp-table-print th:nth-child(2), .bp-table-print td:nth-child(2) { padding-left: 10px; padding-right: 10px; }
+.bp-table-print th:nth-child(3), .bp-table-print td:nth-child(3) { padding-left: 7px; padding-right: 7px; }
+.bp-table-print th:nth-child(4), .bp-table-print td:nth-child(4) { padding-left: 5px; padding-right: 5px; }
+.bp-table-print th:nth-child(5), .bp-table-print td:nth-child(5) { padding-left: 8px; padding-right: 8px; }
+.bp-table-print th:nth-child(6), .bp-table-print td:nth-child(6) { padding-left: 8px; padding-right: 8px; }
+.bp-table-print td { font-size: 12px; color: #434343; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.bp-table-print td.num { font-family: 'Inter', sans-serif; font-size: 12px; color: #434343; }
+.bp-table-print td.unit { font-size: 12px; color: #434343; }
+.bp-table-print td.qty, .bp-table-print td.price { text-align: right; color: #434343; }
+.bp-table-print td.sum { text-align: right; font-family: 'Inter', sans-serif; }   /* столбец Стоимости — обычный вес */
+.bp-table-print .bp-total-row td { padding: 9px 0 0; border-bottom: none; }
+/* Итог таблицы — единственное жирное значение в таблице; цвет — общий
+   текст документа (метка и значение) */
+.bp-table-print .bp-total {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--bg-soft); border-top: 1px solid var(--line);
+  color: #434343;
+}
+.bp-table-print .bp-total .lbl { font-size: 12px; font-weight: 700; color: #434343; }
+.bp-table-print .bp-total .v { font-size: 12px; font-weight: 700; }
+
+/* ---------- Выбор помещения ---------- */
+/* Горизонтальная строка между заголовком зоны и таблицей; кнопки — цвета
+   шапки таблицы (bg-soft, ink-2); активная отличается цветом текста и
+   рамкой — вес не меняется, ничего не прыгает. В PDF не попадает. */
+.room-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.room-tabs button {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink-2);
+  background: var(--bg-soft);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.room-tabs button .c { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.room-tabs button.active { color: var(--ink-1); border-color: var(--ink-2); }
+
+/* ---------- Печать / сохранение PDF ---------- */
+/* Печатается только документ КП; А4, поля 13/14/13/14, контент 182×271.
+   Док-страницу = лист собирает движок (.doc-print-page с разрывом после
+   каждой); последняя — естественная высота. */
+@page { size: A4; margin: 13mm 14mm; }
+@media print {
+  body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .doc-print-page { page-break-after: always; break-after: page; }
+  .doc-print-page:last-child { page-break-after: auto; break-after: auto; }
+  .doc-print-page:last-child .doc-slide:last-child { margin-bottom: 0; }
+  .doc-print-page:last-child .doc-manager-bottom { margin-top: 10mm; }
+  .doc-slide {
+    border: none; box-shadow: none; border-radius: 0;
+    width: auto; min-height: 0; margin: 0 0 6mm; padding: 0;
+    display: block;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .doc-slide p { font-size: 12px; margin: 5px 0; line-height: 1.5; }   /* = экрану по всем параметрам */
+  .doc-slide li { font-size: 12px; margin: 2px 0; line-height: 1.5; }
+  .doc-print-page ul { list-style: disc; padding-left: 5mm; }
+  .room-tabs { display: none; }   /* экранный контрол, в PDF не попадает */
+  .doc-h2 { margin: 0 0 9px; }
+  .doc-h3 { margin: 10px 0 6px; }
+  .doc-title-outer { margin: 0 0 14px; }
+  .doc-title { font-size: 24px; }
+  .doc-grid { gap: 16px; }
+  .doc-hero img { height: 150px; }
+  .doc-band img { height: 6mm; }
+  .doc-band { padding-bottom: 2mm; margin-bottom: 6mm; }
+  .doc-footer { margin-top: 6mm; padding-top: 2mm; }
+  .doc-plan img { height: 36mm; width: auto; max-width: 100%; margin: 0 auto; }
+  .doc-plan-extra img { width: calc((66.6% - 4mm) / 2); }
+  .doc-plan-extra img + img { margin-left: 4mm; }
+  .doc-plan-cap { margin-top: 4px; }
+  /* Ряды изображений — inline-block с явной шириной: печатный движок Chrome
+     раскладывает flex-ряды нестабильно (галерея складывалась столбцом) */
+  .doc-photos { display: block; font-size: 0; }
+  .doc-photos img { display: inline-block; vertical-align: top; width: calc((100% - 20px) / 3); height: 92px; object-fit: cover; }
+  .doc-photos img + img { margin-left: 10px; }
+  .doc-gallery img { width: calc((100% - 50px) / 6); height: 92px; }
+  .doc-note { margin-top: 6px; }
+  .bp-table-print tr { page-break-inside: avoid; break-inside: avoid; }   /* строка не рвётся */
+}
+
+/* ---------- Узкие окна ---------- */
+/* Карточка КП не складывается: ширина — всегда А4, узкое окно листает
+   страницу горизонтально; мобильная компоновка [ ] */
+@media (max-width: 1100px) {
+  .doc-grid { grid-template-columns: 1fr; }
+  .doc-hero img { height: 180px; }
+}

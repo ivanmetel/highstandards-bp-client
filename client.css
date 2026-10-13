@@ -1,0 +1,426 @@
+/* ============================================================
+   Машина сборки КП — демо. Утверждённая версия кабинета клиента
+   (решения Ивана, ТЗ — раздел Смета): палитра, один шрифт Inter,
+   компоновка d3-top / d3-hero / d3-main, тёмная панель сметы.
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-page: #F2EEE7;
+  --bg-page-2: #ECE6DC;
+  --bg-card: #FFFFFF;
+  --bg-soft: #FAF7F2;
+  --ink-1: #1A1A1C;
+  --ink-2: #4A4A50;
+  --ink-3: #8A8A92;
+  --ink-4: #B8B5AE;
+  --line: #E8E3D9;
+  --line-soft: #F0EBE1;
+  --accent: #B85C3C;
+  --accent-dark: #8B4528;
+  --accent-soft: #F5E6DD;
+  --success: #5A8F5A;
+  --success-soft: #E4F0E4;
+  --warn: #B08328;
+  --warn-soft: #F8EFD8;
+  --fail: #B3402A;
+  --fail-soft: #F9E4DC;
+  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
+  --shadow-sm: 0 1px 2px rgba(26,26,28,0.04), 0 2px 4px rgba(26,26,28,0.03);
+  --shadow-md: 0 4px 12px rgba(26,26,28,0.06), 0 2px 4px rgba(26,26,28,0.04);
+  --shadow-xl: 0 48px 80px -20px rgba(26,26,28,0.18), 0 16px 32px rgba(26,26,28,0.08);
+}
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-page-2) 100%);
+  color: var(--ink-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'ss01', 'cv11';
+  min-height: 100vh;
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select { font-family: inherit; }
+ul { padding-left: 22px; }
+li { margin: 4px 0; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+.mono { font-family: 'Inter', sans-serif; }
+
+.page { max-width: 1640px; margin: 0 auto; padding: 28px 40px 56px; }
+
+/* ---------- Баннер демо ---------- */
+.sim-banner {
+  padding: 12px 18px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+/* ---------- Каркас приложения ---------- */
+.app {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 640px;
+}
+.d3-top {
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.d3-top .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+.d3-top .brand .mark {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  object-fit: contain;
+  display: block;
+}
+.d3-top .nav { display: flex; gap: 4px; margin-left: 12px; }
+.d3-top .nav span {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-3);
+  border-radius: 6px;
+}
+.d3-top .nav span.active { color: var(--ink-1); background: var(--bg-soft); }
+.d3-top .right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.d3-top .lang { display: flex; gap: 4px; font-size: 12px; font-weight: 500; }
+.d3-top .lang span { color: var(--ink-4); }
+.d3-top .lang span.active { color: var(--ink-1); font-weight: 600; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--bg-soft);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+.chip.accent { background: var(--accent-soft); color: var(--accent-dark); border-color: transparent; }
+
+/* ---------- Герой: галерея + сводка ---------- */
+.d3-hero { display: grid; grid-template-columns: 1fr 380px; border-bottom: 1px solid var(--line); }
+.d3-hero .gallery { position: relative; min-height: 280px; background: var(--bg-soft); overflow: hidden; }
+.d3-hero .gallery > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.d3-hero .gallery .ribbon { position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: #fff;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+.status-pill.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.status-pill.success { background: var(--success-soft); color: var(--success); border-color: transparent; }
+.status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.d3-hero .summary {
+  padding: 22px 26px;
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-soft);
+}
+/* Ярлык «КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ» над подзаголовком умер (Иван 02.10, раунд):
+   документ называет себя титульным блоком в карточке — один носитель */
+.d3-hero .summary h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.d3-hero .summary .addr { font-size: 12px; color: var(--ink-3); }
+.d3-hero .summary .total { margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--line); }
+.d3-hero .summary .total .lbl {
+  font-size: 12px; color: var(--ink-3); font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+}
+.d3-hero .summary .total .v {
+  font-family: 'Inter', sans-serif;
+  font-size: 28px; font-weight: 700; letter-spacing: -0.02em;
+}
+.d3-hero .summary .total .sub { font-size: 14px; font-weight: 600; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+/* v2 (Иван 02.10): экранов сметы нет — правая колонка героя заканчивается ценой;
+   кабинет под героем — одна вкладка КП, навигация по помещениям в рейле. */
+.btn {
+  padding: 11px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn.primary { background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(184,92,60,0.3); }
+.btn.ghost { background: var(--bg-card); border: 1px solid var(--line); color: var(--ink-1); }
+.btn:disabled { opacity: 0.55; cursor: default; box-shadow: none; }
+.btn.sm { padding: 7px 11px; font-size: 12px; border-radius: 6px; }
+
+/* ---------- Основная сетка: сайдбар + контент ---------- */
+.d3-main { display: grid; grid-template-columns: 264px 1fr; flex: 1; min-height: 0; }
+.d3-main.no-side { grid-template-columns: 1fr; }
+.d3-side { border-right: 1px solid var(--line); padding: 20px; overflow-y: auto; }
+.d3-side .group { margin-bottom: 22px; }
+.d3-side .group .h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.d3-side .group .h .c { font-weight: 600; }
+.d3-side .item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.d3-side .item:hover { background: var(--bg-soft); }
+.d3-side .item.active { background: var(--accent-soft); color: var(--accent-dark); font-weight: 600; }
+.d3-side .item .c { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.d3-side .item.active .c { color: var(--accent); }
+.d3-side .item.bl { font-family: 'Inter', sans-serif; font-size: 12px; }
+
+.d3-content { overflow-y: auto; padding: 20px 24px 28px; }
+
+/* ---------- Тулбар ---------- */
+/* Поиск по позициям умер (Иван 02.10, §10): тулбар несёт только переключатель видов */
+.d3-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.view-toggle {
+  display: flex;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px;
+}
+.view-toggle button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.view-toggle button.active { background: var(--bg-card); color: var(--ink-1); box-shadow: var(--shadow-sm); font-weight: 600; }
+
+/* ---------- Вкладка КП (v2): документ в читаемом веб-виде ---------- */
+/* Вся вкладка — документ КП (Иван 02.10): карточка на тёмной панели, листов А4
+   на экране нет — разрывы страниц остаются у «Сохранить PDF». Форма документа
+   (карточка, таблица, выбор помещения, печать) — document.css админ-репо,
+   единый файл для ЛК и админки, как engine.js; здесь только оправа кабинета. */
+.doc-save { display: flex; justify-content: flex-end; margin-top: 18px; }
+.doc-save .btn { background: var(--bg-card); border: 1px solid var(--line); color: var(--ink-2); }   /* фон страницы светлый — кнопка в светлом виде */
+.doc-save .btn:hover { background: var(--bg-soft); }
+
+/* ---------- Вид: маркдаун ---------- */
+.md-wrap { display: flex; flex-direction: column; gap: 12px; }
+.md-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.md-name { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-2); }
+.md-pre {
+  background: #1F1F22;
+  color: #E8E6E3;
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------- Вид: манифест ---------- */
+.mf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.mf-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+.mf-card.mf-wide { grid-column: 1 / -1; }
+.mf-h {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+.mf-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.mf-field span { font-size: 12px; color: var(--ink-3); font-weight: 500; }
+.mf-field input[type="text"], .mf-field input:not([type]), .mf-field input[type="number"], .mf-field select {
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  border-radius: 6px;
+  padding: 8px 11px;
+  font-size: 14px;
+  color: var(--ink-1);
+  outline: none;
+  width: 100%;
+}
+.mf-field input:focus, .mf-field select:focus { border-color: var(--accent); background: var(--bg-card); }
+.mf-field input:disabled { color: var(--ink-4); }
+.mf-field input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); align-self: flex-start; }
+.mf-pre {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  overflow-x: auto;
+  white-space: pre;
+}
+.mf-actions { margin-top: 14px; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+/* ---------- Вид: отчёт ---------- */
+.rep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rep-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+.rep-card.gates { grid-column: 1 / -1; }
+.rep-h {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+.rep-line { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin: 4px 0; word-break: break-word; }
+.rep-line b { color: var(--ink-1); }
+.rep-sub { font-size: 12px; font-weight: 600; color: var(--ink-3); margin: 12px 0 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.rep-row {
+  display: grid;
+  grid-template-columns: 26px 30px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-soft);
+  margin-bottom: 6px;
+  background: var(--bg-soft);
+}
+.rep-status { font-weight: 700; font-size: 14px; }
+.rep-row.pass .rep-status { color: var(--success); }
+.rep-row.fail { border-color: var(--fail); background: var(--fail-soft); }
+.rep-row.fail .rep-status { color: var(--fail); }
+.rep-row.skip .rep-status { color: var(--ink-4); }
+.rep-n { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-3); }
+.rep-title { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+.rep-detail { grid-column: 3; font-size: 12px; color: var(--ink-3); line-height: 1.55; }
+
+/* ---------- Вкладка КП: тёмная панель + документ ---------- */
+/* Тёмная панель: градиент + виньетка (UI-спека: #2B2826 → #3D3734).
+   Ширина просмотра — сразу 100% А4 (Иван 02.10): карточка документа 794 px
+   (210 мм @96dpi) + поля панели; содержимое карточки = печатной полосе
+   182 мм ≈ 688 px — экран повторяет раскладку PDF. */
+.panel-dark {
+  width: 850px;          /* 794 (А4-карточка) + 2 × 28 паспарту */
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 26px 28px;
+  border-radius: 6px;
+  background: var(--bg-page-2);   /* рамка листа нужна, но не чёрная (Иван 02.10): тёплое паспарту палитры корпуса */
+}
+.est-blk { min-width: 0; }
+
+/* ---------- Адаптив ---------- */
+@media (max-width: 1300px) {
+  .panel-dark { grid-template-columns: 1fr; }
+}
+
+/* ---------- Печать / сохранение PDF ---------- */
+/* Печатается только документ КП (#print-doc) — кабинет не печатается.
+   Нормы печати документа (@page, док-страницы, ряды изображений) —
+   document.css админ-репо; здесь скрывается оправа кабинета. */
+@media print {
+  .sim-banner, .d3-top, .d3-hero, .d3-side, .d3-toolbar, .d3-main { display: none !important; }
+  .page { padding: 0; max-width: none; }
+  .app { box-shadow: none; border-radius: 0; }
+  #print-doc { display: block !important; }
+}
+
+@media (max-width: 1100px) {
+  .page { padding: 20px 18px 40px; }
+  .d3-hero { grid-template-columns: 1fr; }
+  .d3-hero .summary { border-left: none; border-top: 1px solid var(--line); }
+  .d3-main { grid-template-columns: 1fr; }
+  .d3-side { display: none; }
+  .mf-grid, .rep-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- ЛК клиента (поверх общей базы) ---------- */
+.d3-top .nav a { color: var(--ink-3); text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px; }
+.d3-top .nav a:hover { color: var(--accent-dark); background: var(--bg-soft); }
+
+/* Документ для «Сохранить PDF»: на экране скрыт, печатается вместо кабинета */
+#print-doc { display: none; }
+
+/* Тумблер RU/EN: видимость языковых надписей хрома + кликабельность тумблера */
+body.lang-en .i18n-ru { display: none; }
+body:not(.lang-en) .i18n-en { display: none; }
+.d3-top .lang span[data-lang] { cursor: pointer; }
