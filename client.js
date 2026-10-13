@@ -10,7 +10,7 @@
 (function () {
   // Локальная копия: движок, данные и published.json лежат в этой же папке
   const ADMIN = new URLSearchParams(location.search).get("admin") || "";
-  const V = "38";
+  const V = "39";
 
   const loadScript = (src) => new Promise((res, rej) => {
     const s = document.createElement("script");

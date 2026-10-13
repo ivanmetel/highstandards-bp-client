@@ -135,11 +135,12 @@ function assemble(manifest, variantKey) {
     md.push("");
     md.push("---");
     md.push("");
-    // Фото плана: пара слева, суммарно 2/3 полосы; зону называет подпись,
-    // отдельного заголовка нет
+    md.push("## " + FIXED.plan_caption);
+    md.push("");
+    // Фото плана: пара слева, суммарно 2/3 полосы
     md.push('<div style="text-align:left">' + m.images.plans.map((p, i) => '<img src="' + p + '" style="width:32%' + (i ? ";margin-left:4px" : "") + '">').join("") + "</div>");
-    md.push('<div style="text-align:left;font-size:80%;color:#434343">' + FIXED.plan_caption + "</div>");
     sections.push({ id: "sec-plans", slide: sections.length + 1, title: FIXED.plan_caption, blocks: ["plans"] });
+
   }
 
   // --- Слайды: фото объекта, по 3 на слайд (Документ 3.7)
@@ -598,9 +599,9 @@ function renderDoc(a, opts) {
       inner = band + titleBlock +
         '<div class="doc-h2">' + FIXED.description_h2 + '</div><div class="doc-text"><p>' + esc(m.object.opening.replace("{brand}", FIXED.brand.replace(/^MELESHIN\s*/, ""))) + '</p><p><b>' + FIXED.label_object + '</b> ' + esc(m.object.field_object) + '</p><p><b>' + FIXED.label_zone + '</b> ' + esc(m.object.field_zone) + '</p>' + (m.object.field_materials ? '<p><b>' + FIXED.label_materials + '</b> ' + esc(m.object.field_materials) + "</p>" : "") + "</div>";
     } else if (sec.id === "sec-plans") {
-      // Фото плана: ряд слева, суммарно 2/3 полосы; зону называет подпись,
-      // отдельного заголовка нет
-      inner = '<div class="doc-plan-extra">' + m.images.plans.map((p) => '<img src="' + p + '" alt="">').join("") + '</div><div class="doc-plan-cap">' + FIXED.plan_caption + "</div>";
+      // Заголовок зоны — План помещения (замена Плана этажа, Иван 13.10);
+      // фото плана — ряд слева, суммарно 2/3 полосы
+      inner = '<div class="doc-h2">' + FIXED.plan_caption + '</div><div class="doc-plan-extra">' + m.images.plans.map((p) => '<img src="' + p + '" alt="">').join("") + "</div>";
     } else if (sec.id.startsWith("sec-photos")) {
       // Заголовок зоны — на первой фото-полосе; продолжение секции идёт без него
       inner = (sec.title ? '<div class="doc-h2">' + esc(sec.title) + '</div>' : "") + '<div class="doc-photos">' + sec.photos.map((p) => '<img src="' + p + '" alt="">').join("") + "</div>";

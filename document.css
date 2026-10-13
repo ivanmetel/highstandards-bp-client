@@ -66,11 +66,10 @@
 .doc-hero img { width: 100%; height: 250px; object-fit: cover; }
 .doc-plan { text-align: center; }
 .doc-plan img { width: 62%; margin: 0 auto; border-radius: var(--radius-md); }
-/* Доп. фото плана: пара слева, суммарно 2/3 полосы карточки; подпись — кегль заметки */
+/* Фото плана: пара слева, суммарно 2/3 полосы карточки */
 .doc-plan-extra { margin-top: 10px; text-align: left; font-size: 0; }
 .doc-plan-extra img { display: inline-block; vertical-align: top; width: calc((66.6% - 10px) / 2); border-radius: var(--radius-md); }
 .doc-plan-extra img + img { margin-left: 10px; }
-.doc-plan-cap { font-size: 12px; color: #434343; margin-top: 6px; }
 .doc-photos { display: flex; gap: 10px; }
 /* Фотки — детерминированная ширина от полосы карточки: доля 688 px минус
    отбивки, не flex-рост */
@@ -166,7 +165,6 @@
   .doc-plan img { height: 36mm; width: auto; max-width: 100%; margin: 0 auto; }
   .doc-plan-extra img { width: calc((66.6% - 4mm) / 2); }
   .doc-plan-extra img + img { margin-left: 4mm; }
-  .doc-plan-cap { margin-top: 4px; }
   /* Ряды изображений — inline-block с явной шириной: печатный движок Chrome
      раскладывает flex-ряды нестабильно (галерея складывалась столбцом) */
   .doc-photos { display: block; font-size: 0; }
